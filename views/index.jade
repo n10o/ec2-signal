@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  div(ng-controller="ec2Controller" class="container")
+    h1= title
+    input(type="text" ng-model="keyword" placeholder="Search Keyword")
+    hr
+    div(ng-show="showLoading")
+      img(src="/images/loading.gif" height="30px") 
+      span Now Loading...
+    table(ng-hide="showLoading" class="table")
+      thead
+        tr
+          th Status
+          th Name (Tag)
+          th Instance ID
+      tbody
+        tr(id="item" ng-repeat="info in infos | filter:keyword" ng-class="{hopin: hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="clickOnRow(info)")
+          td
+            img(ng-src="/images/signal-{{info.Status}}.png" height="15px")
+          td {{info.TagName}}
+          td {{info.ID}}
