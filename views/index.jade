@@ -3,20 +3,41 @@ extends layout
 block content
   div(ng-controller="ec2Controller" class="container")
     h1= title
-    input(type="text" ng-model="keyword" placeholder="Search Keyword")
-    hr
-    div(ng-show="showLoading")
-      img(src="/images/loading.gif" height="30px") 
-      span Now Loading...
-    table(ng-hide="showLoading" class="table")
+    div.search
+      input(type="text" ng-model="keyword" placeholder="run, stop, as you like")
+      span(ng-if="filtered.length != undefined") You have {{filtered.length}} instances.
+      span(ng-if="filtered.length == undefined") You have no instances.
+    a(href="")
+      span(class="glyphicon glyphicon-refresh" ng-click="clickForReload()")
+    table(class="table table-condensed")
       thead
         tr
-          th Status
-          th Name (Tag)
-          th Instance ID
-      tbody
-        tr(id="item" ng-repeat="info in infos | filter:keyword" ng-class="{hopin: hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="clickOnRow(info)")
+          th
+            a(href="" ng-click="predicate = 'Status'; reverse=!reverse") Status
+          th
+            a(href="" ng-click="predicate = 'TagName'; reverse=!reverse") Name (Tag)
+          th 
+            a(href="" ng-click="predicate = 'ID'; reverse=!reverse") Instance ID
+      tbody(ng-hide="showLoading")
+        tr(id="item" ng-repeat="info in filtered = (infos | filter:keyword | orderBy:predicate:reverse)" ng-class="{hopin: hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="clickOnRow(info)")
           td
             img(ng-src="/images/signal-{{info.Status}}.png" height="15px")
           td {{info.TagName}}
           td {{info.ID}}
+    div(ng-show="showLoading")
+      img(src="/images/loading.gif" height="30px") 
+      span Now Loading...
+    p(ng-if="filtered.length == 0") No instance found...
+    // Modal //
+    script(type="text/ng-template" id="modalContent.html")
+      div.modal-header
+        h3.modal-title Confirm
+      div.modal-body
+        p {{instance.TagName}} is now 
+          mark {{instance.Status}} 
+        p Change instance status (run or stop) ?
+      div.modal-footer
+        button(class="btn btn-warning" ng-click="$close()") Cancel
+        button(class="btn btn-primary" ng-click="changeStatus(instance)") Change Status
+
+

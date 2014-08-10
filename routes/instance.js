@@ -19,11 +19,11 @@ router.get('/', function(req, res) {
         if(error){
             console.log("ERROR:");
             console.log(error);
-            res.send("ERROR");
+            res.send("Unknown Error");
         }else{
 	    var data = data.Reservations;
 	    var instance = [] 
-	    console.log("Length:", data.length);
+	    //console.log("Length:", data.length);
 	    for(var i=0; i<data.length; i++){
 		var instances = data[i].Instances;
 		for(var j=0; j<instances.length; j++){
@@ -46,6 +46,24 @@ router.get('/', function(req, res) {
             res.send(JSON.stringify(instance, undefined, 2));
         }
     });
+});
+
+router.get('/start/:id', function(req, res) {
+  new AWS.EC2().startInstances({InstanceIds: [req.params.id]}, function(error,data){
+    if(error){
+      res.send(error);
+    }
+    res.send(data);
+  });
+});
+
+router.get('/stop/:id', function(req, res) {
+  new AWS.EC2().stopInstances({InstanceIds: [req.params.id]}, function(error,data){
+    if(error){
+      res.send(error);
+    }
+    res.send(data);
+  });
 });
 
 module.exports = router;
