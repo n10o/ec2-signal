@@ -46,8 +46,8 @@ SIG.controller('ec2Controller', function(instanceCtrl, $scope, $http, $timeout, 
     }else if(status == "stopped"){
       instanceCtrl.start(id);
     }else{
-      // TODO
-      console.log("ERROR");
+      // TODO error handling
+      console.log("Unknown status error");
     } 
     $scope.modalInstance.close();
   	$scope.showLoading = true;

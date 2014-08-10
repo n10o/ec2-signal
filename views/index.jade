@@ -1,14 +1,16 @@
 extends layout
 
 block content
-  div(ng-controller="ec2Controller" class="container")
-    h1= title
+  div.container(ng-controller="ec2Controller")
+    h1 EC2 signal 
+      a.right(href="")
+        span(class="glyphicon glyphicon-refresh" ng-click="clickForReload()")
+    hr
     div.search
-      input(type="text" ng-model="keyword" placeholder="run, stop, as you like")
-      span(ng-if="filtered.length != undefined") You have {{filtered.length}} instances.
-      span(ng-if="filtered.length == undefined") You have no instances.
-    a(href="")
-      span(class="glyphicon glyphicon-refresh" ng-click="clickForReload()")
+      h3
+        input(type="text" ng-model="keyword" placeholder="Search Keyword")
+        span(ng-if="filtered.length != undefined")  instances: {{filtered.length}} 
+        span(ng-if="filtered.length == undefined")  instances: 0
     table(class="table table-condensed")
       thead
         tr
@@ -26,16 +28,15 @@ block content
           td {{info.ID}}
     div(ng-show="showLoading")
       img(src="/images/loading.gif" height="30px") 
-      span Now Loading...
+      span  Now Loading...
     p(ng-if="filtered.length == 0") No instance found...
     // Modal //
     script(type="text/ng-template" id="modalContent.html")
       div.modal-header
         h3.modal-title Confirm
       div.modal-body
-        p {{instance.TagName}} is now 
+        p {{instance.TagName}} is 
           mark {{instance.Status}} 
-        p Change instance status (run or stop) ?
       div.modal-footer
         button(class="btn btn-warning" ng-click="$close()") Cancel
         button(class="btn btn-primary" ng-click="changeStatus(instance)") Change Status
