@@ -3,9 +3,11 @@ extends layout
 block content
   div.container(ng-controller="ec2Controller")
     h1 EC2 signal 
-      a.right(href="")
+      a(href="")
         span(class="glyphicon glyphicon-refresh" ng-click="clickForReload()")
     hr
+    div(class="alert alert-danger" ng-show="showAlert") {{alertText}}
+      button(type="button" class="close" ng-click="disableAlert()") x
     div.search
       h3
         input(type="text" ng-model="keyword" placeholder="Search Keyword")
@@ -39,6 +41,5 @@ block content
           mark {{instance.Status}} 
       div.modal-footer
         button(class="btn btn-warning" ng-click="$close()") Cancel
-        button(class="btn btn-primary" ng-click="changeStatus(instance)") Change Status
-
-
+        button(ng-if="instance.Status == 'stopped' || instance.Status == 'running'" class="btn btn-primary" ng-click="changeStatus(instance)") Change Status
+        button(ng-if="instance.Status != 'stopped' && instance.Status != 'running'" class="btn btn-primary" ng-click="$close()") OK, I'm waiting

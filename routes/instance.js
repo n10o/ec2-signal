@@ -14,53 +14,100 @@ var params = {
 };
 
 /* GET instance listing. */
+// TODO Error handling
 router.get('/', function(req, res) {
-    new AWS.EC2().describeInstances(params, function(error,data){
-        if(error){
-            console.log("ERROR:");
-            console.log(error);
-            res.send("Unknown Error");
-        }else{
-	    var data = data.Reservations;
-	    var instance = [] 
-	    //console.log("Length:", data.length);
-	    for(var i=0; i<data.length; i++){
-		var instances = data[i].Instances;
-		for(var j=0; j<instances.length; j++){
-			var id = instances[j].InstanceId;
-			var tags = instances[j].Tags;
-			var status = instances[j].State.Name;
-			for(var k=0; k<tags.length; k++){
-				var key = tags[k].Key;
-				if(key == "Name"){
-					var name = tags[k].Value;
-				}
-			}
-			var content = {};
-			content["ID"] = id;
-			content["TagName"] = name;
-			content["Status"] = status;
-			instance.push(content);
-		}
-	    }
-            res.send(JSON.stringify(instance, undefined, 2));
-        }
-    });
+  new AWS.EC2().describeInstances(params, function(err,data){
+      if(err){
+        console.log("ERROR:");
+        console.log(err);
+        res.send("Unknown Error");
+      }else{
+        var data = data.Reservations;
+	      var instance = [] 
+        for(var i = 0; i < data.length; i++){
+          var instances = data[i].Instances;
+          for(var j = 0; j < instances.length; j++){
+            var id = instances[j].InstanceId;
+            var tags = instances[j].Tags;
+            var status = instances[j].State.Name;
+            for(var k = 0; k < tags.length; k++){
+              var key = tags[k].Key;
+              if(key == "Name"){
+                var name = tags[k].Value;
+              }
+            }
+          var content = {};
+          content["ID"] = id;
+          content["TagName"] = name;
+          content["Status"] = status;
+          instance.push(content);
+          }
+	      }
+        var description = {};
+        description["InstanceDescriptions"] = instance;
+        res.send(JSON.stringify(description, undefined, 2));
+      }
+  });
 });
 
 router.get('/start/:id', function(req, res) {
-  new AWS.EC2().startInstances({InstanceIds: [req.params.id]}, function(error,data){
-    if(error){
-      res.send(error);
+  var id = req.params.id;
+  new AWS.EC2().startInstances({InstanceIds: [id]}, function(err,data){
+    if(err){
+      res.send(err);
     }
+    // deregister, register ELB
+    new AWS.ELB().describeLoadBalancers({}, function(err,data){
+      var lbname;
+      if (err){
+        console.log(err, err.stack);
+      }else{
+        var desc = data.LoadBalancerDescriptions;
+        for(var i = 0; i < desc.length; i++){
+          var instances = desc[i].Instances;
+          var name = desc[i].LoadBalancerName;
+          for(var j = 0; j < instances.length; j++){
+            if(instances[j]["InstanceId"] == id){
+              console.log("instance Found:"+ id);
+              // TODO need multiple instances consideration
+              lbname = name;
+            }
+          }
+        }
+        console.log("LBNAME:" + lbname);
+        if(lbname){
+          var params = {
+            Instances: [
+              {
+              InstanceId: id
+              }
+            ],
+            LoadBalancerName: lbname
+          }
+          console.log("ID,lbname" + id + lbname);
+          new AWS.ELB().deregisterInstancesFromLoadBalancer(params, function(err, data){
+            if (err){
+              console.log(err, err.stack);
+            }else{
+              new AWS.ELB().registerInstancesWithLoadBalancer(params, function(err, data){
+                if (err){
+                  console.log(err, err.stack);
+                }else{
+                }
+              });
+            }
+          });
+        }
+      }
+    });
     res.send(data);
   });
 });
 
 router.get('/stop/:id', function(req, res) {
-  new AWS.EC2().stopInstances({InstanceIds: [req.params.id]}, function(error,data){
-    if(error){
-      res.send(error);
+  new AWS.EC2().stopInstances({InstanceIds: [req.params.id]}, function(err,data){
+    if(err){
+      res.send(err);
     }
     res.send(data);
   });

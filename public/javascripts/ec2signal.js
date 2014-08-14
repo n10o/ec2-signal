@@ -20,7 +20,11 @@ SIG.factory('instanceCtrl', function($http){
 });
 
 SIG.controller('ec2Controller', function(instanceCtrl, $scope, $http, $timeout, $modal){
-	$scope.showLoading = true;
+  $scope.showLoading = true;
+  $scope.showAlert = false;
+  $scope.disableAlert = function(){
+    $scope.showAlert = false;
+  }
 
 	$scope.clickOnRow = function(instance){
     $scope.instance = instance;
@@ -32,27 +36,38 @@ SIG.controller('ec2Controller', function(instanceCtrl, $scope, $http, $timeout, 
 
   $scope.clickForReload = function(){
     $scope.showLoading = true;
-  	instanceCtrl.getList().then(function(infos){
-  		$scope.infos = infos.data;
-  		$scope.showLoading = false;
-  	});
+    instanceCtrl.getList().then(function(infos){
+      $scope.infos = infos.data.InstanceDescriptions;
+      $scope.showLoading = false;
+    });
   }
 
   $scope.changeStatus = function(instance){
     var status = instance.Status;
     var id = instance.ID;
+    // TODO more error handling
     if(instance.Status == "running"){
-      instanceCtrl.stop(id);
+      instanceCtrl.stop(id).then(function(result){
+        havePermissionFromStatuscode(result.data.statusCode);
+      });
     }else if(status == "stopped"){
-      instanceCtrl.start(id);
+      instanceCtrl.start(id).then(function(result){
+        havePermissionFromStatuscode(result.data.statusCode);
+      });
     }else{
-      // TODO error handling
       console.log("Unknown status error");
     } 
     $scope.modalInstance.close();
-  	$scope.showLoading = true;
-    $timeout(function(){$scope.clickForReload()}, 3000);
+    $scope.showLoading = true;
+    $timeout(function(){$scope.clickForReload()}, 5000);
   };
+
+  function havePermissionFromStatuscode(status){
+    if(status == 403){
+      $scope.alertText = "You don't have permission";
+      $scope.showAlert = true;
+    }
+  }
 
   $scope.clickForReload();
 });
