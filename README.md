@@ -17,7 +17,7 @@ AWS IAM account(need some policies)
  * DeregisterInstancesFromLoadBalancer
  * RegisterInstancesWithLoadBalancer
 
-## signal unleashed
+## Signal UNLEASHED
 ```
 cd <angry-signal-directory>
 npm install
