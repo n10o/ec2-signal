@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "run": "forever start bin/www",
-    "stop": "forever stop bin/www"
+    "stop": "forever stop bin/www",
+    "list": "forever list"
   },
   "dependencies": {
     "express": "~4.2.0",
