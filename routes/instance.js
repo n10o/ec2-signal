@@ -3,23 +3,10 @@ var router = express.Router();
 var AWS = require('aws-sdk');
 AWS.config.loadFromPath('./config.json');
 
-// TODO consider this
-var params = {
-    Filters: [
-        {
-         Name: 'tag:Env',
-         Values: ['dev']
-        }
-    ]
-};
-
 /* GET instance listing. */
-// TODO Error handling
 router.get('/', function(req, res) {
-  new AWS.EC2().describeInstances(params, function(err,data){
+  new AWS.EC2().describeInstances({}, function(err,data){
       if(err){
-        console.log("ERROR:");
-        console.log(err);
         res.send("Unknown Error");
       }else{
         var data = data.Reservations;
@@ -68,13 +55,11 @@ router.get('/start/:id', function(req, res) {
           var name = desc[i].LoadBalancerName;
           for(var j = 0; j < instances.length; j++){
             if(instances[j]["InstanceId"] == id){
-              console.log("instance Found:"+ id);
               // TODO need multiple instances consideration
               lbname = name;
             }
           }
         }
-        console.log("LBNAME:" + lbname);
         if(lbname){
           var params = {
             Instances: [

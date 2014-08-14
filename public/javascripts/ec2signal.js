@@ -45,7 +45,6 @@ SIG.controller('ec2Controller', function(instanceCtrl, $scope, $http, $timeout, 
   $scope.changeStatus = function(instance){
     var status = instance.Status;
     var id = instance.ID;
-    // TODO more error handling
     if(instance.Status == "running"){
       instanceCtrl.stop(id).then(function(result){
         havePermissionFromStatuscode(result.data.statusCode);
