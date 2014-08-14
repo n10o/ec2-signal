@@ -3,9 +3,9 @@
 AWS EC2 web controller
 
 ## Requirements
-npm
-bower (npm install -g bower)
-AWS IAM account(need some policies)
+- npm
+- bower (npm install -g bower)
+- AWS IAM account(Need some policies. See below)
 
 ### IAM policies
 - EC2
