@@ -1,9 +1,11 @@
 {
-  "name": "angry-signal-generated",
+  "name": "ec2-signal",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "run": "forever start bin/www",
+    "stop": "forever stop bin/www"
   },
   "dependencies": {
     "express": "~4.2.0",
@@ -14,6 +16,7 @@
     "debug": "~0.7.4",
     "jade": "~1.3.0",
     "stylus": "0.42.3",
-    "aws-sdk": "*"
+    "aws-sdk": "*",
+    "forever": "*"
   }
 }
