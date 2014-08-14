@@ -1,6 +1,9 @@
 # ec2-signal
 
 AWS EC2 web controller
+ - See instance running status
+ - Control instance power on, off
+ - Automatic ELB deregister, register
 
 ## Requirements
 - npm
