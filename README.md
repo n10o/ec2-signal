@@ -20,6 +20,9 @@ AWS EC2 web controller
 ## Signal UNLEASHED
 ```
 cd <angry-signal-directory>
+vim config.json
+cat config.json
+> { "accessKeyId": "<YOURKEY>", "secretAccessKey": "<YOURKEY>", "region": "<YOURREGION:e.g.)ap-northeast-1>" }
 npm install
 bower install
 npm start
