@@ -7,7 +7,7 @@ AWS.config.loadFromPath('./config.json');
 router.get('/', function(req, res) {
   new AWS.EC2().describeInstances({}, function(err,data){
       if(err){
-        res.send("Unknown Error");
+        res.send("Error:" + err);
       }else{
         var data = data.Reservations;
 	      var instance = [] 
@@ -42,49 +42,50 @@ router.get('/start/:id', function(req, res) {
   new AWS.EC2().startInstances({InstanceIds: [id]}, function(err,data){
     if(err){
       res.send(err);
-    }
-    // deregister, register ELB
-    new AWS.ELB().describeLoadBalancers({}, function(err,data){
-      var lbname;
-      if (err){
-        console.log(err, err.stack);
-      }else{
-        var desc = data.LoadBalancerDescriptions;
-        for(var i = 0; i < desc.length; i++){
-          var instances = desc[i].Instances;
-          var name = desc[i].LoadBalancerName;
-          for(var j = 0; j < instances.length; j++){
-            if(instances[j]["InstanceId"] == id){
-              // TODO need multiple instances consideration
-              lbname = name;
-            }
-          }
-        }
-        if(lbname){
-          var params = {
-            Instances: [
-              {
-              InstanceId: id
+    }else{
+      // deregister, register ELB
+      new AWS.ELB().describeLoadBalancers({}, function(err,data){
+        var lbname;
+        if (err){
+          console.log(err, err.stack);
+        }else{
+          var desc = data.LoadBalancerDescriptions;
+          for(var i = 0; i < desc.length; i++){
+            var instances = desc[i].Instances;
+            var name = desc[i].LoadBalancerName;
+            for(var j = 0; j < instances.length; j++){
+              if(instances[j]["InstanceId"] == id){
+                // TODO need multiple instances consideration
+                lbname = name;
               }
-            ],
-            LoadBalancerName: lbname
-          }
-          new AWS.ELB().deregisterInstancesFromLoadBalancer(params, function(err, data){
-            if (err){
-              console.log(err, err.stack);
-            }else{
-              new AWS.ELB().registerInstancesWithLoadBalancer(params, function(err, data){
-                if (err){
-                  console.log(err, err.stack);
-                }else{
-                }
-              });
             }
-          });
+          }
+          if(lbname){
+            var params = {
+              Instances: [
+                {
+                InstanceId: id
+                }
+              ],
+              LoadBalancerName: lbname
+            }
+            new AWS.ELB().deregisterInstancesFromLoadBalancer(params, function(err, data){
+              if (err){
+                console.log(err, err.stack);
+              }else{
+                new AWS.ELB().registerInstancesWithLoadBalancer(params, function(err, data){
+                  if (err){
+                    console.log(err, err.stack);
+                  }else{
+                  }
+                });
+              }
+            });
+          }
         }
-      }
-    });
-    res.send(data);
+      });
+      res.send(data);
+    }
   });
 });
 
@@ -92,8 +93,9 @@ router.get('/stop/:id', function(req, res) {
   new AWS.EC2().stopInstances({InstanceIds: [req.params.id]}, function(err,data){
     if(err){
       res.send(err);
+    }else{
+      res.send(data);
     }
-    res.send(data);
   });
 });
 
