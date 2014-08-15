@@ -26,7 +26,7 @@ SIG.controller('ec2Controller', function(instanceCtrl, $scope, $http, $timeout, 
     $scope.showAlert = false;
   }
 
-	$scope.clickOnRow = function(instance){
+  $scope.clickOnRow = function(instance){
     $scope.instance = instance;
     $scope.modalInstance = $modal.open({
       templateUrl: 'modalContent.html',
