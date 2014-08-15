@@ -10,7 +10,7 @@ router.get('/', function(req, res) {
         res.send("Error:" + err);
       }else{
         var data = data.Reservations;
-	      var instance = [] 
+	      var instance = [];
         for(var i = 0; i < data.length; i++){
           var instances = data[i].Instances;
           for(var j = 0; j < instances.length; j++){
