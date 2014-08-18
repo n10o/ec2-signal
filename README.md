@@ -39,4 +39,5 @@ npm run-script stop
 ```
 
 ## Why signal?
-I don't know. Ask horiken-san
+- I don't know. Ask horiken-san
+  - horiken-san said: 信号以外ないっしょ？
