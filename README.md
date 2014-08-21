@@ -43,4 +43,5 @@ npm run-script stop
  * You can auto start/stop instance (Combination with cron/jenkins)
 
 ## Why signal?
-I don't know. Ask horiken-san
+- I don't know. Ask horiken-san
+  - horiken-san said: 信号以外ないっしょ？
