@@ -4,7 +4,7 @@ AWS EC2 web controller
  - See instance running status
  - Control instance power on, off
  - Automatic ELB deregister, register
- - Used angular.js + node.js + jade + stylus
+ - Used angular.js + express(node.js) + jade + stylus
 
 ## Requirements
 - npm
@@ -37,6 +37,10 @@ npm start
 npm run-script run
 npm run-script stop
 ```
+
+## Use API
+- See example (tools/control.sh)
+ * You can auto start/stop instance (Combination with cron/jenkins)
 
 ## Why signal?
 I don't know. Ask horiken-san
