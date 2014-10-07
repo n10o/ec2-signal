@@ -21,6 +21,48 @@ AWS EC2 web controller
  * DeregisterInstancesFromLoadBalancer
  * RegisterInstancesWithLoadBalancer
 
+### IAM policy example
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1406618523000",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "Stmt1406618546000",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Sid": "Stmt1406618546001",
+      "Effect": "Allow",
+      "Action": [
+            "elasticloadbalancing:DescribeLoadBalancers",
+            "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+            "elasticloadbalancing:RegisterInstancesWithLoadBalancer"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+```
+
 ## Signal UNLEASHED
 ```
 cd <ec2-signal-directory>
